@@ -9,7 +9,10 @@ import axios from 'axios'
 
 // 配置请求跟路径
 axios.defaults.baseURL = 'http://www.ysqorz.top:8888/api/private/v1/'
-
+axios.interceptors.request.use(config => {
+  config.headers.Authorization = window.sessionStorage.getItem('token')
+  return config
+})
 // 挂载axios到原型上
 Vue.prototype.$http = axios
 
