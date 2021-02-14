@@ -66,17 +66,17 @@
       login() {
         this.$refs.loginFormRef.validate(async (valid) => {
           //   console.log(valid)
-          if (!valid) return;
+          if (!valid) return
           const {
             data: res
           } = await this.$http.post('login', this.loginForm)
-          if (res.meta.status !== 200) return this.$message.error('登录失败，请重新登录');
+          if (res.meta.status !== 200) return this.$message.error('登录失败，请重新登录')
           this.$message({
             message: '登录成功了！',
             type: 'success'
           })
-          console.log(res.data.token)
-          window.sessionStorage.setItem('token',res.data.token)
+          // console.log(res.data.token)
+          window.sessionStorage.setItem('token', res.data.token)
           this.$router.push('/home')
         })
       }
