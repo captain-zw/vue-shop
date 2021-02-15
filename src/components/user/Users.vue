@@ -42,7 +42,8 @@
             <el-button type="primary" icon="el-icon-edit" circle size="mini" @click="showDialogEdit(scope.row.id)">
             </el-button>
             <!-- 删除按钮 -->
-            <el-button type="danger" icon="el-icon-delete" circle size="mini"></el-button>
+            <el-button type="danger" icon="el-icon-delete" @click="deleteUser(scope.row.id)" circle size="mini">
+            </el-button>
             <!-- 分配角色按钮 -->
             <el-tooltip effect="dark" content="分配角色" placement="top" :enterable="false">
               <el-button type="info" icon="el-icon-setting" circle size="mini"></el-button>
@@ -81,7 +82,7 @@
       </el-dialog>
 
       <!-- 修改用户对话框 -->
-      <el-dialog title="用户修改" :visible.sync="editDialogVisible" width="50%">
+      <el-dialog title="用户修改" :visible.sync="editDialogVisible" width="50%" @close="edieDialogClosed">
         <el-form :model="editForm" :rules="editFormRules" ref="editFormRef" label-width="70px">
           <el-form-item label="用户名">
             <el-input v-model="editForm.username" disabled></el-input>
@@ -95,7 +96,7 @@
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="editDialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="editDialogVisible = false">确 定</el-button>
+          <el-button type="primary" @click="editUserInfo">确 定</el-button>
         </span>
       </el-dialog>
     </el-card>
@@ -263,6 +264,46 @@
         }
         this.editForm = res.data
         this.editDialogVisible = true
+      },
+      edieDialogClosed() {
+        this.$refs.editFormRef.resetFields()
+      },
+      editUserInfo(id) {
+        this.$refs.editFormRef.validate(async valid => {
+          // console.log(valid)
+          if (!valid) return
+          // 通过发起请求修改
+          const {
+            data: res
+          } = await this.$http.put(`users/${this.editForm.id}`, {
+            email: this.editForm.email,
+            mobile: this.editForm.mobile
+          })
+          if (res.meta.status !== 200) return this.$message.error('用户修改失败！')
+          this.$message.success('用户修改成功！')
+          this.editDialogVisible = false
+          this.getUserList()
+          // console.log(res)
+        })
+      },
+      async deleteUser(id) {
+        const confirmResult = await this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).catch(err => err)
+        if (confirmResult !== 'confirm') {
+          return this.$message('已经取消删除')
+        }
+        // console.log(confirmResult)
+        const {
+          data: res
+        } = await this.$http.delete('users/' + id)
+        if (res.meta.status !== '200') {
+          return this.$message.error('删除用户失败')
+        }
+        this.$message.success('用户已经删除')
+        this.getUserList()
       }
     }
   }
