@@ -5,17 +5,19 @@ body,
     height: 100%;
     margin: 0;
     padding: 0;
+    min-width: 800px;
 }
-.el-breadcrumb{
+
+.el-breadcrumb {
     margin-bottom: 15px;
     font-size: 12px;
 }
 
-.el-table{
+.el-table {
     margin-top: 15px;
     font-size: 15px;
 }
 
-.el-pagination{
+.el-pagination {
     margin-top: 15px;
 }
