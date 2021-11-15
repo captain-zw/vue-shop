@@ -211,6 +211,7 @@ export default {
         this.getParamsData()
       })
     },
+    // 下面这行删除报错
     // eslint-disable-next-line camelcase
     async showEditDialog(attr_id) {
       // console.log('111')
