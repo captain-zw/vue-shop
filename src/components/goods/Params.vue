@@ -215,6 +215,7 @@ export default {
     // eslint-disable-next-line camelcase
     async showEditDialog(attr_id) {
       // console.log('111')
+      // 下面这行删除报错
       // eslint-disable-next-line camelcase
       const { data: res } = await this.$http.get(`categories/${this.cateId}/attributes/${attr_id}`, { params: { attr_sel: this.activeName } })
       if (res.meta.status !== 200) {
