@@ -35,7 +35,18 @@
             <el-table-column
               type="expand">
               <template slot-scope="scope">
-                <el-tag v-for="(item,i) in scope.row.attr_vals" :key="i" closable>{{ item }}</el-tag>
+                <el-tag v-for="(item,i) in scope.row.attr_vals" @close="handleClose(i,scope.row)" :key="i" closable>{{ item }}</el-tag>
+                <el-input
+                  class="input-new-tag"
+                  v-if="scope.row.inputVisible"
+                  v-model="scope.row.inputValue"
+                  ref="saveTagInput"
+                  size="small"
+                  @keyup.enter.native="handleInputConfirm(scope.row)"
+                  @blur="handleInputConfirm(scope.row)"
+                >
+                </el-input>
+                <el-button v-else class="button-new-tag" size="small" @click="showInput(scope.row)">+ New Tag</el-button>
               </template>
             </el-table-column>
             <el-table-column
@@ -66,6 +77,23 @@
             border stripe>
             <el-table-column
               type="expand">
+              <el-table-column
+                type="expand">
+                <template slot-scope="scope">
+                  <el-tag v-for="(item,i) in scope.row.attr_vals" @close="handleClose(i,scope.row)" :key="i" closable>{{ item }}</el-tag>
+                  <el-input
+                    class="input-new-tag"
+                    v-if="scope.row.inputVisible"
+                    v-model="scope.row.inputValue"
+                    ref="saveTagInput"
+                    size="small"
+                    @keyup.enter.native="handleInputConfirm(scope.row)"
+                    @blur="handleInputConfirm(scope.row)"
+                  >
+                  </el-input>
+                  <el-button v-else class="button-new-tag" size="small" @click="showInput(scope.row)">+ New Tag</el-button>
+                </template>
+              </el-table-column>
             </el-table-column>
             <el-table-column
               type="index">
@@ -122,6 +150,7 @@
   </div>
 </template>
 <script>
+
 export default {
   data() {
     return {
@@ -182,6 +211,8 @@ export default {
     async getParamsData() {
       if (this.selectedCateKeys.length !== 3) {
         this.selectedCateKeys = []
+        this.manyTableData = []
+        this.onlyTableData = []
         return
       }
       const { data: res } = await this.$http.get(`categories/${this.cateId}/attributes`, { params: { sel: this.activeName } })
@@ -190,6 +221,8 @@ export default {
       }
       res.data.forEach(item => {
         item.attr_vals = item.attr_vals ? item.attr_vals.split(' ') : []
+        item.inputVisible = false
+          item.inputValue = ''
         console.log(item.attr_vals)
       })
       console.log('参数列表', res)
@@ -273,6 +306,39 @@ export default {
       }
       this.$message.success('参数删除成功！')
       this.getParamsData()
+    },
+    handleInputConfirm(row) {
+      if (row.inputValue.trim().length === 0) {
+        row.inputValue = ''
+        row.inputVisible = false
+        return
+      }
+      row.attr_vals.push(row.inputValue.trim())
+      row.inputValue = ''
+      row.inputVisible = false
+      this.saveAttrVals(row)
+    },
+    async saveAttrVals(row) {
+      const { data: res } = await this.$http.put(`categories/${this.cateId}/attributes/${row.attr_id}`, {
+        attr_name: row.attr_name,
+        attr_sel: row.attr_sel,
+        attr_vals: row.attr_vals.join(' ')
+      })
+      if (res.meta.status !== 200) {
+        return this.$message.error('修改参数失败！')
+      }
+      this.$message.success('修改参数成功')
+    },
+    showInput(row) {
+      row.inputVisible = true
+      // $nextTick 当页面上的元素被重新渲染后，才会指定回调函数中的代码
+      this.$nextTick(_ => {
+        this.$refs.saveTagInput.$refs.input.focus()
+      })
+    },
+    handleClose(i, row) {
+      row.attr_vals.splice(i, 1)
+      this.saveAttrVals(row)
     }
   },
   computed: {
@@ -304,5 +370,8 @@ export default {
 
 .el-tag {
   margin: 5px;
+}
+.input-new-tag{
+  width: 100px;
 }
 </style>
