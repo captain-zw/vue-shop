@@ -34,6 +34,9 @@
             border stripe>
             <el-table-column
               type="expand">
+              <template slot-scope="scope">
+                <el-tag v-for="(item,i) in scope.row.attr_vals" :key="i" closable>{{ item }}</el-tag>
+              </template>
             </el-table-column>
             <el-table-column
               type="index">
@@ -165,8 +168,9 @@ export default {
       if (res.meta.status !== 200) {
         return this.$message.error('获取商品分类失败！')
       }
+      // console.log('商品分类', this.catelist, res
+      // console.log('222', res.data)
       this.catelist = res.data
-      console.log('商品分类', this.catelist)
     },
     handleChange() {
       // console.log(this.selectedCateKeys)
@@ -184,6 +188,10 @@ export default {
       if (res.meta.status !== 200) {
         this.$message.error('获取参数列表失败！')
       }
+      res.data.forEach(item => {
+        item.attr_vals = item.attr_vals ? item.attr_vals.split(' ') : []
+        console.log(item.attr_vals)
+      })
       console.log('参数列表', res)
       if (this.activeName === 'many') {
         this.manyTableData = res.data
@@ -292,5 +300,9 @@ export default {
 <style lang="less" scoped>
 .cat_opt {
   margin: 15px 0;
+}
+
+.el-tag {
+  margin: 5px;
 }
 </style>
