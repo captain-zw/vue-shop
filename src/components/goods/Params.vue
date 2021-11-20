@@ -15,7 +15,7 @@
       <el-row :gutter="10" class="cat_opt">
         <el-col>
           <span>选择商品分类：</span>
-          <!--       选择商品分类的级连选择框-->
+          <!--选择商品分类的级连选择框-->
           <el-cascader
             v-model="selectedCateKeys"
             :options="catelist"
