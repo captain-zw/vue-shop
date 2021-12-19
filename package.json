@@ -23,8 +23,7 @@
     "vue-table-with-tree-grid": "^0.2.4"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.3.0",
-    "@vue/cli-plugin-eslint": "^3.1.1",
+    "@vue/cli-plugin-babel": "^4.5.15",
     "@vue/cli-plugin-router": "3.12.1",
     "@vue/cli-service": "^3.12.1",
     "@vue/eslint-config-standard": "^5.1.2",
